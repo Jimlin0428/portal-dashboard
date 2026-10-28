@@ -100,7 +100,7 @@ export const TOOLS_CONFIG: ToolItem[] = [
     title: 'PMBA 核心專業選修知識庫',
     description: '產業分析、個案研究與高階經理人數位筆記花園，累積跨領域知識複利。',
     category: 'lifestyle',
-    url: 'https://my-digital-garden.vercel.app', // 改為對外公開的正式網址
+    url: 'https://my-digital-garden-nine-rho.vercel.app/', // 改為對外公開的正式網址
     subdomain: 'garden',
     isExternal: true, // 知識庫若為公開頁面，可先設為 true
     iconName: 'BookOpen',

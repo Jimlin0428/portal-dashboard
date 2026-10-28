@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { ExternalLink, Lock, CheckCircle, ArrowRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { ExternalLink, Lock, CheckCircle, ArrowRight, Loader2 } from 'lucide-react';
 import { ToolItem } from '@/types';
 import { ToolIcon } from './ToolIcon';
 import { resolveToolUrl } from '@/config/tools';
@@ -17,7 +17,49 @@ export const ToolCard: React.FC<ToolCardProps> = ({
   isUnlocked,
   onOpenUnlockModal,
 }) => {
+  const [loading, setLoading] = useState(false);
   const targetUrl = resolveToolUrl(tool);
+
+  // 處理點擊「進入系統」的 SSO 換證跳轉
+  const handleLaunch = async () => {
+    // 1. 若為外部工具（如 LINE LIFF），不走 Ticket SSO，直接開新視窗
+    if (tool.isExternal) {
+      window.open(targetUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // 2. 向入口後端申請一次性 SSO Ticket
+      const res = await fetch('/auth/issue-ticket', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ toolId: tool.id }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || '無法取得單點登入通行證');
+        return;
+      }
+
+      // 3. 取得 Ticket 後，導向子站核驗端點
+      // 去除結尾斜線避免雙斜線問題
+      const cleanBaseUrl = targetUrl.replace(/\/+$/, '');
+      const ssoRedirectUrl = `${cleanBaseUrl}/api/auth/sso?ticket=${encodeURIComponent(data.ticket)}`;
+
+      window.open(ssoRedirectUrl, '_blank', 'noopener,noreferrer');
+    } catch (err) {
+      console.error('SSO Jump Error:', err);
+      alert('連線失敗，請檢查網路連線或稍後再試');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div
@@ -101,17 +143,27 @@ export const ToolCard: React.FC<ToolCardProps> = ({
       {/* 卡片底部操作按鈕 */}
       <div className="pt-2">
         {isUnlocked ? (
-          <a
-            href={targetUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 transition shadow-sm hover:shadow"
+          <button
+            type="button"
+            onClick={handleLaunch}
+            disabled={loading}
+            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 transition shadow-sm hover:shadow disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            <span>進入系統</span>
-            <ExternalLink className="w-4 h-4" />
-          </a>
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>取得通行證中...</span>
+              </>
+            ) : (
+              <>
+                <span>進入系統</span>
+                <ExternalLink className="w-4 h-4" />
+              </>
+            )}
+          </button>
         ) : (
           <button
+            type="button"
             onClick={() => onOpenUnlockModal(tool)}
             className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm text-slate-700 dark:text-slate-200 bg-slate-200/70 hover:bg-slate-300/80 dark:bg-slate-800 dark:hover:bg-slate-700/80 transition"
           >

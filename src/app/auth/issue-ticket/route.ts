@@ -1,18 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { createClient } from '@supabase/supabase-js';
 
 export async function POST(request: NextRequest) {
   let response = NextResponse.next();
 
-  // 1. 初始化讀取 Cookie 的 Supabase Client（確認使用者身分）
+  // 1. 初始化讀取 Cookie 的 Supabase Client（明確定義 cookiesToSet 型別）
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         getAll: () => request.cookies.getAll(),
-        setAll: (cookiesToSet) => {
+        setAll: (cookiesToSet: Array<{ name: string; value: string; options: CookieOptions }>) => {
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options)
           );

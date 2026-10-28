@@ -55,7 +55,7 @@ export const TOOLS_CONFIG: ToolItem[] = [
     category: 'business',
     url: 'https://ntu-pmba-schedule.vercel.app',
     subdomain: 'pmba-schedule',
-    isExternal: false,
+    isExternal: true, // 改為 true：直接開新分頁進入首頁，不走 SSO Ticket
     iconName: 'CalendarCheck',
     badge: '熱門',
     highlights: ['課堂時程即時同步', '必修與選修學分檢視', 'Google 行事曆匯入支援'],
@@ -78,7 +78,7 @@ export const TOOLS_CONFIG: ToolItem[] = [
     category: 'finance',
     url: 'https://compound-interest-tools.vercel.app',
     subdomain: 'compound',
-    isExternal: false,
+    isExternal: false, // 走 SSO Ticket
     iconName: 'TrendingUp',
     badge: '投資理財',
     highlights: ['動態定期定額試算', '通膨率與報酬率模擬', '長線報酬圖表輸出'],
@@ -90,7 +90,7 @@ export const TOOLS_CONFIG: ToolItem[] = [
     category: 'finance',
     url: 'https://vault-bill.vercel.app',
     subdomain: 'vaultbill',
-    isExternal: false,
+    isExternal: false, // 走 SSO Ticket
     iconName: 'CreditCard',
     badge: '隱私保護',
     highlights: ['多銀行 PDF 電子帳單解析', '消費結構熱力圖分析', '本地解析隱私無憂'],
@@ -100,9 +100,9 @@ export const TOOLS_CONFIG: ToolItem[] = [
     title: 'PMBA 核心專業選修知識庫',
     description: '產業分析、個案研究與高階經理人數位筆記花園，累積跨領域知識複利。',
     category: 'lifestyle',
-    url: 'https://vercel.com/jimlin0428-s-projects/my-digital-garden',
+    url: 'https://my-digital-garden.vercel.app', // 改為對外公開的正式網址
     subdomain: 'garden',
-    isExternal: false,
+    isExternal: true, // 知識庫若為公開頁面，可先設為 true
     iconName: 'BookOpen',
     badge: '精選知識',
     highlights: ['個案研究精華筆記', '雙向鏈結知識圖譜', '快速全文檢索'],
@@ -114,7 +114,7 @@ export const TOOLS_CONFIG: ToolItem[] = [
     category: 'lifestyle',
     url: 'https://bazi-family-graph.vercel.app',
     subdomain: 'bazi',
-    isExternal: false,
+    isExternal: false, // 走 SSO Ticket
     iconName: 'Compass',
     badge: '哲思洞察',
     highlights: ['八字四柱動態排盤', '家庭成員生剋關係圖', '大運流年互動引導'],

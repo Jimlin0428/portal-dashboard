@@ -53,7 +53,7 @@ export const TOOLS_CONFIG: ToolItem[] = [
     title: 'PM 課表',
     description: '臺大 PMBA 課程進度、考試日程與學分時程規劃助手，精準掌握修課進度。',
     category: 'business',
-    url: 'https://https://ntu-pmba-schedule.vercel.app',
+    url: 'https://ntu-pmba-schedule.vercel.app',
     subdomain: 'pmba-schedule',
     isExternal: false,
     iconName: 'CalendarCheck',

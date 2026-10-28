@@ -29,17 +29,18 @@ export const getRootDomain = (): string => {
  * 解析工具對應之實際目標 URL
  */
 export const resolveToolUrl = (tool: ToolItem): string => {
-  if (tool.isExternal) {
+  // 1. 若有直接設定完整的 url，一律優先回傳完整網址（適用 Vercel 獨立專案網址）
+  if (tool.url) {
     return tool.url;
   }
+
+  // 2. 本地開發環境 (localhost)
   const rootDomain = getRootDomain();
-  
-  // 若為 localhost 開發環境
   if (rootDomain.includes('localhost')) {
     return `http://${tool.subdomain || tool.id}.localhost:3000`;
   }
-  
-  // 生產環境採用 HTTPS + 子網域
+
+  // 3. 備用：若日後綁定個人自訂頂級網域 (Custom Domain) 時的子網域拼接
   return `https://${tool.subdomain || tool.id}.${rootDomain}`;
 };
 

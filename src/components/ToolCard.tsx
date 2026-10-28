@@ -22,7 +22,7 @@ export const ToolCard: React.FC<ToolCardProps> = ({
 
   // 處理點擊「進入系統」的 SSO 換證跳轉
   const handleLaunch = async () => {
-    // 1. 若為外部工具（如 LINE LIFF），不走 Ticket SSO，直接開新視窗
+    // 1. 若為外部工具（如 LINE LIFF），不需 SSO 票券，直接在新分頁開啟
     if (tool.isExternal) {
       window.open(targetUrl, '_blank', 'noopener,noreferrer');
       return;
@@ -31,7 +31,7 @@ export const ToolCard: React.FC<ToolCardProps> = ({
     try {
       setLoading(true);
 
-      // 2. 向入口後端申請一次性 SSO Ticket
+      // 2. 向入口後端申請一次性 SSO Ticket（60 秒有效、單次使用）
       const res = await fetch('/auth/issue-ticket', {
         method: 'POST',
         headers: {
@@ -44,19 +44,19 @@ export const ToolCard: React.FC<ToolCardProps> = ({
 
       if (!res.ok) {
         alert(data.error || '無法取得單點登入通行證');
+        setLoading(false);
         return;
       }
 
-      // 3. 取得 Ticket 後，導向子站核驗端點
-      // 去除結尾斜線避免雙斜線問題
+      // 3. 取得 Ticket 後，以 window.location.href 直接導向子站核驗端點
+      // 避免 window.open 在不同瀏覽器下觸發預取或探針請求導致 Ticket 被重複核銷
       const cleanBaseUrl = targetUrl.replace(/\/+$/, '');
       const ssoRedirectUrl = `${cleanBaseUrl}/api/auth/sso?ticket=${encodeURIComponent(data.ticket)}`;
 
-      window.open(ssoRedirectUrl, '_blank', 'noopener,noreferrer');
+      window.location.href = ssoRedirectUrl;
     } catch (err) {
       console.error('SSO Jump Error:', err);
       alert('連線失敗，請檢查網路連線或稍後再試');
-    } finally {
       setLoading(false);
     }
   };
@@ -147,17 +147,17 @@ export const ToolCard: React.FC<ToolCardProps> = ({
             type="button"
             onClick={handleLaunch}
             disabled={loading}
-            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 transition shadow-sm hover:shadow disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 transition shadow-sm hover:shadow disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
           >
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>取得通行證中...</span>
+                <span>核發通行證中...</span>
               </>
             ) : (
               <>
                 <span>進入系統</span>
-                <ExternalLink className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4" />
               </>
             )}
           </button>
@@ -165,7 +165,7 @@ export const ToolCard: React.FC<ToolCardProps> = ({
           <button
             type="button"
             onClick={() => onOpenUnlockModal(tool)}
-            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm text-slate-700 dark:text-slate-200 bg-slate-200/70 hover:bg-slate-300/80 dark:bg-slate-800 dark:hover:bg-slate-700/80 transition"
+            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm text-slate-700 dark:text-slate-200 bg-slate-200/70 hover:bg-slate-300/80 dark:bg-slate-800 dark:hover:bg-slate-700/80 transition cursor-pointer"
           >
             <Lock className="w-4 h-4 text-slate-500" />
             <span>立即解鎖 / 訂閱</span>

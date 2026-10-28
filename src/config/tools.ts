@@ -78,7 +78,7 @@ export const TOOLS_CONFIG: ToolItem[] = [
     category: 'finance',
     url: 'https://compound-interest-tools.vercel.app',
     subdomain: 'compound',
-    isExternal: false, // 走 SSO Ticket
+    isExternal: true, // 走 SSO Ticket
     iconName: 'TrendingUp',
     badge: '投資理財',
     highlights: ['動態定期定額試算', '通膨率與報酬率模擬', '長線報酬圖表輸出'],
@@ -114,7 +114,7 @@ export const TOOLS_CONFIG: ToolItem[] = [
     category: 'lifestyle',
     url: 'https://bazi-family-graph.vercel.app',
     subdomain: 'bazi',
-    isExternal: false, // 走 SSO Ticket
+    isExternal: true, // 走 SSO Ticket
     iconName: 'Compass',
     badge: '哲思洞察',
     highlights: ['八字四柱動態排盤', '家庭成員生剋關係圖', '大運流年互動引導'],
